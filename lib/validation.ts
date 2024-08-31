@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const userFormValidation = z.object({
-  username: z
+  name: z
     .string()
     .min(2, "Username must be atleast 2 characters")
     .max(50, "Username cannot exceed 50 characters"),

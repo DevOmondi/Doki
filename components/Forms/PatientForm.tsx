@@ -4,38 +4,45 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import CustomFormField from "../CustomFormField";
-import SubmitButton from "../ui/SubmitButton";
+import SubmitButton from "../SubmitButton";
 import { userFormValidation } from "@/lib/validation";
-
-export enum FormFieldType {
-  INPUT = "input",
-  TEXTAREA = "textarea",
-  PHONE_INPUT = "phoneInput",
-  CHECKBOX = "checkbox",
-  DATE_PICKER = "datePicker",
-  SELECT = "select",
-  SKELETON = "skeleton",
-}
+import CustomFormField, { FormFieldType } from "../CustomFormField";
+import { createUser } from "@/lib/actions/patient.actions";
 
 const PatientForm = () => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   // 1. Define form.
   const form = useForm<z.infer<typeof userFormValidation>>({
     resolver: zodResolver(userFormValidation),
     defaultValues: {
-      username: "",
+      name: "",
       email: "",
       phone: "",
     },
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof userFormValidation>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof userFormValidation>) {
+    setIsLoading(true);
+    try {
+      const user = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+      };
+
+      const newUser = await createUser(user);
+
+      if (newUser) router.push(`/patients/${newUser.$id}/register`);
+      // console.log("User details:", user);
+    } catch (error) {
+      console.log("Error submitting:", error);
+    }
+    setIsLoading(false);
   }
   return (
     <Form {...form}>
@@ -47,7 +54,7 @@ const PatientForm = () => {
         <CustomFormField
           control={form.control}
           fieldType={FormFieldType.INPUT}
-          name="username"
+          name="name"
           placeholder="Collins Omondi"
           label="Full name"
           iconAlt="User icon"
