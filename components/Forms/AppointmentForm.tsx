@@ -12,7 +12,7 @@ import { SelectItem } from "../ui/select";
 import SubmitButton from "../SubmitButton";
 import {
   createAppointment,
-  updateAppointmentList,
+  updateAppointment,
 } from "@/lib/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
 import { Appointment } from "@/types/appwrite.types";
@@ -99,7 +99,7 @@ const AppointmentForm = ({
           },
           type,
         };
-        const updatedAppointment = await updateAppointmentList(
+        const updatedAppointment = await updateAppointment(
           appointmentToUpdate
         );
 
