@@ -1,14 +1,17 @@
 import Image from "next/image";
 // import { Button } from "@/components/ui/button";
 import Logo from "../public/assets/icons/logo-full.svg";
-import onboardingImage from '../public/assets/images/onboarding-img.png';
+import onboardingImage from "../public/assets/images/onboarding-img.png";
 import PatientForm from "@/components/Forms/PatientForm";
+import PassKeyModal from "@/components/PassKeyModal";
 import Link from "next/link";
 
-export default function Home() {
+export default function Home({ searchParams }: SearchParamProps) {
+  const isAdmin = searchParams.admin === "true";
   const currentYear = new Date().getFullYear();
   return (
     <main className="flex h-screen max-h-screen ">
+      {isAdmin && <PassKeyModal />}
       <section className="remove-scrollbar container my-auto">
         <div className="sub-container max-w-[496px]">
           <Image

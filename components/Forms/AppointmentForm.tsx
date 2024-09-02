@@ -10,11 +10,14 @@ import { useRouter } from "next/navigation";
 import { Form } from "@/components/ui/form";
 import { SelectItem } from "../ui/select";
 import SubmitButton from "../SubmitButton";
-import { createAppointment } from "@/lib/actions/appointment.actions";
+import {
+  createAppointment,
+  updateAppointmentList,
+} from "@/lib/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
 import { Appointment } from "@/types/appwrite.types";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
-import { createUser } from "@/lib/actions/patient.actions";
+// import { createUser } from "@/lib/actions/patient.actions";
 import { Doctors } from "@/constants";
 
 type AppointmentFormPropTypes = {
@@ -96,6 +99,14 @@ const AppointmentForm = ({
           },
           type,
         };
+        const updatedAppointment = await updateAppointmentList(
+          appointmentToUpdate
+        );
+
+        if (updatedAppointment) {
+          setOpen && setOpen(false);
+          form.reset();
+        }
       }
     } catch (error) {
       console.log("Error creating appointment:", error);
@@ -120,10 +131,12 @@ const AppointmentForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <section className="mb-12 space-y-4">
-          <h1 className="header">New Appointment</h1>
-          <p className="text-dark-700">Request a new appointment. 📋</p>
-        </section>
+        {type === "create" && (
+          <section className="mb-12 space-y-4">
+            <h1 className="header">New Appointment</h1>
+            <p className="text-dark-700">Request a new appointment. 📋</p>
+          </section>
+        )}
         {/* Create appointment type */}
         {type !== "cancel" && (
           <>

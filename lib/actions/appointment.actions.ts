@@ -10,6 +10,7 @@ import { parseStringify } from "../utils";
 import { revalidatePath } from "next/cache";
 import { Appointment } from "@/types/appwrite.types";
 
+// CREATE APPOINTMENT
 export const createAppointment = async (
   appointment: CreateAppointmentParams
 ) => {
@@ -25,3 +26,42 @@ export const createAppointment = async (
     console.error("An error occurred while creating a new appointment:", error);
   }
 };
+
+// GET APPOINTMENT
+export const getAppointment = async (appointmentId: string) => {
+    try {
+      const appointment = await databases.getDocument(
+        DATABASE_ID!,
+        APPOINTMENT_COLLECTION_ID!,
+        appointmentId
+      );
+      return parseStringify(appointment);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // UPDATE APPOINTMENT
+  export const updateAppointmentList = async ({
+    appointmentId,
+    userId,
+    appointment,
+    type,
+  }: UpdateAppointmentParams) => {
+    try {
+      const updatedAppointment = await databases.updateDocument(
+        DATABASE_ID!,
+        APPOINTMENT_COLLECTION_ID!,
+        appointmentId,
+        appointment
+      );
+      if (!updatedAppointment) {
+        throw new Error("Appointment not found");
+      }
+      //TODO SMS notification
+      revalidatePath('/admin');
+      return parseStringify(updatedAppointment);
+    } catch (error) {
+      console.log("Error when Updating appointment", error);
+    }
+  };
